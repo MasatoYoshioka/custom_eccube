@@ -1,5 +1,5 @@
 <?php
-class SC_Model_Apply_Ex extends SC_Db_Ex
+class SC_Model_Apply_Ex extends SC_Model_Core_Main_Ex
 {
 	var $key = 'id';
 	var $table = 'dtb_apply';

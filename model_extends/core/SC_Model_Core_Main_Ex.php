@@ -163,11 +163,12 @@ class SC_Model_Core_Main_Ex {
 		$this->_table .= ", " . $table;
 	}
 	public function getCol($array,$prefix,$default = false){
+		if($default){
+			$default = array('id','create_date','update_date');
+			$array = array_merge($array,$default);
+		}
 		foreach($array as $key){
 			$result .= $prefix . $key . " ,";
-		}
-		if($default){
-			$result .= 'id,create_date,update_date';
 		}
 		
 		return rtrim($result,',');
@@ -180,6 +181,13 @@ class SC_Model_Core_Main_Ex {
 		}
 		return $sqlval;
 	}
+    public function getSqlValObj($array,$checkArray){
+        $result = array();
+        foreach($checkArray as $key){
+            $sqlval[$key] = $array->$key;
+        }
+        return $sqlval;
+    }
 	//新規かどうかチェック $key=$this->_key が入っているかいないかで確認 新規登録ができなくなるバグあり
 	//$keyが入っている場合にその対象のテーブルに該当のKEYが入っているかを確認
 	public function checkNew($id = null,$table){

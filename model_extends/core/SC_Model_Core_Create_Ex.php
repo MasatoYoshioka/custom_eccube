@@ -1,6 +1,6 @@
 <?php
 
-class SC_Model_Core_Create_Ex extends SC_Db_Ex{
+class SC_Model_Core_Create_Ex extends SC_Model_Core_Main_Ex{
 # テーブル作成関数
 # fileds 定義
 # name => 
@@ -18,12 +18,14 @@ class SC_Model_Core_Create_Ex extends SC_Db_Ex{
 #
 # 主キーはID
 # return void(0)
-	public function createTable($fileds,$table,$db_name)
+	public function createTable($fileds,$table,$db_name,$index = NULL)
 	{
 		if(empty($fileds)) return false;
 		$text = " text CHARACTER SET utf8 COLLATE utf8_general_ci";
-		$id = "id MEDIUMINT NOT NULL AUTO_INCREMENT COMMENT 'ID',";
-		$default = "create_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '登録日', update_date timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新日', del_flg smallint(2) NOT NULL DEFAULT 0 COMMENT '削除フラグ', PRIMARY KEY (id))";
+		$time = " timestamp ";
+		$id = "id MEDIUMINT NOT NULL AUTO_INCREMENT ,";
+		$default = "create_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,  update_date timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' , del_flg smallint(2) NOT NULL DEFAULT 0 , PRIMARY KEY (id)";
+		$end = ")";
 		$sql = "CREATE TABLE IF NOT EXISTS $db_name.$table (";
 		$sql .= $id;
 		foreach($fileds as $filed => $val){
@@ -35,6 +37,15 @@ class SC_Model_Core_Create_Ex extends SC_Db_Ex{
 				break;
 				case 'SMALLINT':
 					$tmp .= " " . $val['type'] . "(" . $val['length'] . ")";
+				break;
+				case 'INT':
+					$tmp .= " " . $val['type'] . "(" . $val['length'] . ")";
+				break;
+				case 'MEDIUMINT':
+					$tmp .= " " . $val['type'] ;
+				break;
+				case 'TIMESTAMP':
+					$tmp .= $time ;
 				break;
 				default:
 					return false;
@@ -48,9 +59,16 @@ class SC_Model_Core_Create_Ex extends SC_Db_Ex{
 			if(isset($val['default'])){
 				$tmp .= ' DEFAULT ' . $val['default'];
 			}
-			$sql .= $tmp . " COMMENT '" . $val['comment'] . "',";
+			if(isset($val['comment'])){
+				$tmp .= " COMMENT '" . $val['comment'];
+			}
+			$sql .= $tmp . ",";
 		}
 		$sql .= $default;
+		if(isset($index)){
+			$sql .= "," . $index;
+		}
+		$sql .= $end;
 		$this->query($sql,null);
 	}
 }

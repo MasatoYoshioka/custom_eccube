@@ -12,9 +12,9 @@ abstract class SC_Library_Abstruct_Ex {
 	}
 	#入力項目
     abstract function lfInitParam();
-	public function init()
+	public function init($method = null)
 	{
-		$this->setForms();
+		$this->setForms($method);
 		$this->checkErr();
 		$this->getForms();
 	}
