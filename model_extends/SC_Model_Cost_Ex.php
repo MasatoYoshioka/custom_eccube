@@ -19,12 +19,17 @@ class SC_Model_Cost_Ex extends SC_Model_Core_Main_Ex
 		$where = $this->where . " AND id = ? ";
 		return $this->selectDbRow($this->getCol($this->col,null,true),$this->table,$where,array($id));
 	}
-	public function get_month_sum($yyyymm)
+	public function get_month_sum($yyyymm,$category_id = NULL)
 	{
 		$col = "SUM(price * count) as sum_price";
 		$where = $this->where . " AND pay_date LIKE ? " ;
-		$dates = date('Y-m',strtotime($yyyymm . "01")) . "%";
-		return $this->selectDbRow($col,$this->table,$where,$dates);
+		$val[] = date('Y-m',strtotime($yyyymm . "01")) . "%";
+		if(!empty($category_id)){
+			$where .= " AND category_id = ?";
+			array_push($val,$category_id);
+		}
+
+		return $this->selectDbRow($col,$this->table,$where,$val);
 	}
 	public function get_day_sum($yyyymmdd)
 	{

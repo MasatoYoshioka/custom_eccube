@@ -84,12 +84,21 @@ class SC_Model_Sale_Ex extends SC_Model_Core_Main_Ex
 	}
 	public function get_day($yyyymmdd)
 	{
-		$col = "I.menu_item_id as menu_id,sum(I.sales + I.tax) as sum_all_sales,sum(I.sales) as sum_sales,sum(I.tax) as sum_tax,sum(I.count) as sum_count";
+		$col = "I.menu_item_id as menu_id,sum(I.sales + I.tax) as sum_all_sales,sum(I.sales) as sum_sales,sum(I.tax) as sum_tax,sum(I.count) as sum_count, sum(I.discount_sales + I.discount_tax) as sum_all_discount, sum(I.sales + I.tax) - sum(I.discount_sales + I.discount_tax) as pay_price";
+
 		$dates = date('Y-m-d',strtotime($yyyymmdd));
 		$table = "sale S, item I";
 		$where = "S.del_flg = 0 AND I.del_flg = 0 AND S.yubireji_id = I.perent_yubireji_id AND S.status = 'CLOSE' AND S.sales_date = ?";
 		$group = "menu_item_id";
 		return $this->selectDb($col,$table,$where,$dates,$group);
+	}
+	public function get_day_reji($yyyymmdd)
+	{
+		$col = "price,ADDTIME(paid_at,'0 09:00:00.000000') as paid_at, price,yubireji_id";
+		$dates = date('Y-m-d',strtotime($yyyymmdd));
+		$table = "sale";
+		$where = "del_flg = 0 AND status = 'CLOSE' AND sales_date = ?";
+		return $this->selectDb($col,$table,$where,$dates);
 	}
 	public function createTable(){
 		$fileds = $this->DefineTable();

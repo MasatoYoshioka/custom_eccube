@@ -14,6 +14,13 @@ class SC_Model_Item_Ex extends SC_Model_Core_Main_Ex
 		$create = new SC_Model_Core_Create_Ex();
 		$create->createTable($fileds,$this->table,DB_NAME,$this->index);
 	}
+	public function get_yubireji_id($yubireji_id)
+	{
+        $col = implode(',',$this->col) . ",discount_sales + discount_tax as discount, sales + tax as all_sales,(sales + tax) - (discount_sales + discount_tax) as pay_price";
+        $table = "item";
+        $where = "del_flg = 0 AND perent_yubireji_id = ?";
+        return $this->selectDb($col,$table,$where,array($yubireji_id));
+	}
 	public function DefineTable()
 	{
 		$fileds = array(
